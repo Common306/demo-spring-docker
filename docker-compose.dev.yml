@@ -1,0 +1,45 @@
+version: "3.8"
+#containers => services
+services:
+  demo-mysql-docker-container:
+    image: mysql:8.0.28
+    container_name: demo-mysql-docker-container
+    ports:
+      - 3310:3306
+    volumes:
+      - demo-mysql-docker-data:/var/lib/mysql
+      - demo-mysql-config-deamond:/etc/mysql/conf.d
+    networks:
+      - backend
+    environment:
+      MYSQL_USER: lhchung
+      MYSQL_PASSWORD: Chung@3062k1
+      MYSQL_ROOT_PASSWORD: Chung@3062k1
+      MYSQL_DATABASE: StudentManagement
+  demo-phpmyadmin-docker-container:
+    depends_on:
+      -   demo-mysql-docker-container
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - 8085:80
+    environment:
+      PMA_HOST: demo-mysql-docker-container
+      MYSQL_ROOT_PASSWORD: Chung@3062k1
+    networks:
+      - backend
+  demo-spring-docker-container:
+    image: lhchung/demo-spring-docker:1.0.0
+    container_name: demo-spring-docker-container
+    ports:
+      - 8081:8080
+    volumes:
+      - ./:/app
+    networks:
+      - backend
+networks:
+  backend:
+    name: demo-app-docker-network
+volumes:
+  demo-mysql-docker-data:
+  demo-mysql-config-deamond:
